@@ -9,9 +9,10 @@ public class Tree {
     public Tree(Tree tree, int i, int value){
         int height;
         if (i < 2){
-           height = 2; 
+           height = 1; 
+        } else {
+            height = (int) (Math.log(i)/Math.log(2)) + 1;
         }
-        height = (int) Math.ceil(Math.log(i)/Math.log(2));
         branch = new Branch(height, i, value);
     }
 
