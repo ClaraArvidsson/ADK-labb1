@@ -4,7 +4,8 @@ public class Tree {
         root = new Root();
     }
     
-    private class Node{
+    private interface Node{
+        public String toString();
     }
 
     private class Root{
@@ -14,14 +15,19 @@ public class Tree {
         public Root(){
             size = 0;
         }
+
+        public String toString(){
+            return start.toString();
+        }
     }
 
-    private class Branch extends Node{
+    private class Branch implements Node{
         private int maxinsubtree;
         private Node left;
         private Node right;
 
         public Branch(int height, int index, int value){
+            maxinsubtree = value;
             int bit = (index << (height-1)) & 1;
             if (height == 1){
                 if (bit == 0){
@@ -38,14 +44,26 @@ public class Tree {
                 }
             }        
         }
+
+        public String toString(){
+            return "(" + left.toString() + " " + right.toString() + ")";
+        }
     }
 
-    private class Leaf extends Node{
+    private class Leaf implements Node{
         private final int value;
 
         public Leaf(int value){
             this.value = value;
         }
+
+        public String toString(){
+            return Integer.toString(value);
+        }
+    }
+
+    public String toString(){
+        return root.toString();
     }
 }
 
