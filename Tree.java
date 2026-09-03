@@ -9,13 +9,15 @@ public class Tree {
     }
 
     public Tree(Tree tree, int i, int value){
-        // int height;
+        size = tree.size + 1;
+        int newHeight;
         if (i < 2){
-           height = 1; 
+           newHeight = 1; 
         } else {
-            height = (int) (Math.log(i)/Math.log(2)) + 1;
+            newHeight = (int) (Math.log(i)/Math.log(2)) + 1;
         }
-        branch = new Branch(height, i, value);
+        height = Math.max(tree.height, newHeight);
+        branch = new Branch(tree.branch, height, i, value);
     }
 
     
@@ -64,11 +66,11 @@ public class Tree {
                 }
             } else {
                 if (bit == 0){
-                    left = new Branch(oldBranch.left, height-1, i, value);
+                    left = new Branch((Branch) oldBranch.left, height-1, i, value);
                     right = oldBranch.right;
 
                 } else {
-                    right = new Branch(oldBranch.right, height-1, i, value);
+                    right = new Branch((Branch) oldBranch.right, height-1, i, value);
                     left = oldBranch.left;
                 }
             }        
