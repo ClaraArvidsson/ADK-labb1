@@ -10,17 +10,15 @@ public class Tree {
 
     public Tree(Tree oldTree, int i, int value) {
         size = oldTree.size + 1;
-        int newHeight;
-        if (i < 2) {
-            newHeight = 1;
-        } else {
-            newHeight = (int) (Math.log(i) / Math.log(2)) + 1;
-        }
+        int newHeight = i < 2 ? 1 : (int) (Math.log(i) / Math.log(2)) + 1;
+        height = Math.max(oldTree.height, newHeight);
         if (oldTree.branch == null) {
             branch = new Branch(height, i, value);
-        } else if (oldTree.height < newHeight) {
-            branch = oldTree.branch.expand(newHeight);
-            branch.right = new Branch(height - 1, i, value);
+        } else if (oldTree.height < height) {
+            Branch leftBranch = oldTree.branch.expand(height - 1);
+            Branch rightBranch = new Branch(height - 1, i, value);
+            branch = new Branch(Math.max(leftBranch.maxinsubtree, rightBranch.maxinsubtree), height, leftBranch,
+                    rightBranch);
         } else {
             branch = new Branch(oldTree.branch, height, i, value);
         }
@@ -38,7 +36,7 @@ public class Tree {
         private Node left;
         private Node right;
 
-        private Branch(int maxinsubtree, int height, Node left, Node right) {
+        public Branch(int maxinsubtree, int height, Node left, Node right) {
             this.maxinsubtree = maxinsubtree;
             this.height = height;
             this.left = left;
@@ -67,17 +65,20 @@ public class Tree {
 
         public Branch(Branch oldBranch, int height, int i, int value) {
             this.height = height;
-            maxinsubtree = value;
             int bit = (i >> (height - 1)) & 1;
             if (height <= 1) {
                 if (bit == 0) {
                     left = new Leaf(value);
-                    right = oldBranch.right;
+                    right = (Leaf) oldBranch.right;
                 } else {
                     right = new Leaf(value);
-                    left = oldBranch.left;
+                    left = (Leaf) oldBranch.left;
                 }
-                maxinsubtree = Math.max(((Leaf) left).value, ((Leaf) left).value);
+
+                int leftMaxValue = left != null ? ((Leaf) left).value : 0;
+                int rightMaxValue = right != null ? ((Leaf) left).value : 0;
+
+                maxinsubtree = Math.max(leftMaxValue, rightMaxValue);
             } else {
                 if (bit == 0) {
                     if (oldBranch.right != null)
@@ -96,7 +97,11 @@ public class Tree {
                         right = new Branch((Branch) oldBranch.right, height - 1, i, value);
                     }
                 }
-                maxinsubtree = Math.max(((Branch) left).maxinsubtree, ((Branch) left).maxinsubtree);
+
+                int leftMaxValue = left != null ? ((Branch) left).maxinsubtree : 0;
+                int rightMaxValue = right != null ? ((Branch) right).maxinsubtree : 0;
+
+                maxinsubtree = Math.max(leftMaxValue, rightMaxValue);
             }
         }
 
@@ -106,10 +111,6 @@ public class Tree {
             } else {
                 return (new Branch(maxinsubtree, height + 1, this, null)).expand(targetHeight);
             }
-        }
-
-        public int getHeight() {
-            return height;
         }
 
         public int getValue(int i) {
@@ -143,10 +144,6 @@ public class Tree {
             this.value = value;
         }
 
-        public int getHeight() {
-            return 0;
-        }
-
         public String toString() {
             return Integer.toString(value);
         }
@@ -168,22 +165,17 @@ public class Tree {
         return new Tree(a, i, value);
     }
 
-    private int getHeight() {
-        return height;
-    }
-
     public static int get(Tree a, int i) {
         return a.branch.getValue(i);
     }
 
     public static void main(String[] args) {
         Tree tree = newarray();
-        tree = set(tree, 5, 12);
-        tree = set(tree, 10, 32);
+        tree = set(tree, 0, 10);
+        tree = set(tree, 1, 20);
+        tree = set(tree, 0, 30);
+        tree = set(tree, 4, 40);
         System.out.println(tree.toString());
 
-        System.out.println(get(tree, 5));
-        System.out.println(get(tree, 10));
-        System.out.println(get(tree, 0));
     }
 }
