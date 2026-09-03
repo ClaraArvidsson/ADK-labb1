@@ -77,7 +77,7 @@ public class Tree {
                     right = new Leaf(value);
                     left = oldBranch.left;
                 }
-                maxinsubtree = Math.max(left.getValue(0), right.getValue(0));
+                maxinsubtree = Math.max(((Leaf) left).value, ((Leaf) left).value);
             } else {
                 if (bit == 0) {
                     if (oldBranch.right != null)
