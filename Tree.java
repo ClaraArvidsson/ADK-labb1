@@ -64,9 +64,9 @@ public class Tree {
                 }
             } else {
                 if (bit == 0){
-                    return left != null ? left.getValue(i >> 1) : 0;
+                    return left != null ? left.getValue(i) : 0;
                 } else {
-                    return right != null ? right.getValue(i >> 1) : 0;
+                    return right != null ? right.getValue(i) : 0;
                 }
             }  
         }
