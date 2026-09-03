@@ -50,6 +50,30 @@ public class Tree {
             }        
         }
 
+        public Branch(Branch oldBranch, int height, int i, int value){
+            this.height = height;
+            maxinsubtree = value;
+            int bit = (i >> (height-1)) & 1;
+            if (height <= 1){
+                if (bit == 0){
+                    left = new Leaf(value);
+                    right = oldBranch.right;
+                } else {
+                    right = new Leaf(value);
+                    left = oldBranch.left;
+                }
+            } else {
+                if (bit == 0){
+                    left = new Branch(oldBranch.left, height-1, i, value);
+                    right = oldBranch.right;
+
+                } else {
+                    right = new Branch(oldBranch.right, height-1, i, value);
+                    left = oldBranch.left;
+                }
+            }        
+        }
+
         public int getHeight(){
             return height;
         }
@@ -110,11 +134,12 @@ public class Tree {
         return new Tree(a, i, value);
     }
 
+
+
     private int getHeight(){
         return height;
     }
 
-    // get value av branchen ska returners
     public static int get(Tree a, int i){
         return a.branch.getValue(i);
     }
