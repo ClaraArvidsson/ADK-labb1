@@ -16,9 +16,6 @@ public class Tree {
         } else {
             newHeight = (int) (Math.log(i) / Math.log(2)) + 1;
         }
-
-        // height = Math.max(tree.height, newHeight);
-
         if (oldTree.branch == null) {
             branch = new Branch(height, i, value);
         } else if (oldTree.height < newHeight) {
@@ -80,6 +77,7 @@ public class Tree {
                     right = new Leaf(value);
                     left = oldBranch.left;
                 }
+                maxinsubtree = Math.max(left.getValue(0), right.getValue(0));
             } else {
                 if (bit == 0) {
                     if (oldBranch.right != null)
@@ -98,20 +96,9 @@ public class Tree {
                         right = new Branch((Branch) oldBranch.right, height - 1, i, value);
                     }
                 }
+                maxinsubtree = Math.max(((Branch) left).maxinsubtree, ((Branch) left).maxinsubtree);
             }
         }
-
-        // private Branch expand(Branch branch, int targetHeight) {
-        // if (targetHeight == branch.height) {
-        // return branch;
-        // } else {
-        // Branch newBranchNode = new Branch(branch.height);
-        // newBranchNode.left = branch;
-        // newBranchNode.maxinsubtree = branch.maxinsubtree;
-        // newBranchNode.height = branch.height + 1;
-        // return expand(newBranchNode, targetHeight);
-        // }
-        // }
 
         private Branch expand(int targetHeight) {
             if (targetHeight <= height) {
