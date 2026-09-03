@@ -17,7 +17,11 @@ public class Tree {
             newHeight = (int) (Math.log(i)/Math.log(2)) + 1;
         }
         height = Math.max(tree.height, newHeight);
-        branch = new Branch(tree.branch, height, i, value);
+        if (tree.branch == null){
+            branch = new Branch(height, i, value);
+        } else {
+            branch = new Branch(tree.branch, height, i, value);
+        }
     }
 
     
@@ -66,12 +70,19 @@ public class Tree {
                 }
             } else {
                 if (bit == 0){
-                    left = new Branch((Branch) oldBranch.left, height-1, i, value);
-                    right = oldBranch.right;
-
+                    if (oldBranch.right != null) right = oldBranch.right;
+                    if (oldBranch.left == null){
+                        left = new Branch(height-1, i, value);
+                    } else{
+                        left = new Branch((Branch) oldBranch.left, height-1, i, value);
+                    }
                 } else {
-                    right = new Branch((Branch) oldBranch.right, height-1, i, value);
-                    left = oldBranch.left;
+                    if (oldBranch.left != null) left = oldBranch.left;
+                    if (oldBranch.right == null ){
+                        right = new Branch(height-1, i, value);
+                    } else {
+                        right = new Branch((Branch) oldBranch.right, height-1, i, value);
+                    }
                 }
             }        
         }
@@ -150,9 +161,12 @@ public class Tree {
     public static void main(String[] args){
         Tree tree = newarray();
         tree = set(tree, 5, 12);
+        tree = set(tree, 10, 32);
         System.out.println(tree.toString());
 
         System.out.println(get(tree, 5));
+         System.out.println(get(tree, 10));
+          System.out.println(get(tree, 0));
     }
 }
 
