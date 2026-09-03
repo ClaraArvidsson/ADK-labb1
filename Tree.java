@@ -3,65 +3,77 @@ public class Tree {
     private int height;
     private Branch branch;
 
-    public Tree(){
+    public Tree() {
         size = 0;
         height = 0;
     }
 
-    public Tree(Tree tree, int i, int value){
-        size = tree.size + 1;
+    public Tree(Tree oldTree, int i, int value) {
+        size = oldTree.size + 1;
         int newHeight;
-        if (i < 2){
-           newHeight = 1; 
+        if (i < 2) {
+            newHeight = 1;
         } else {
-            newHeight = (int) (Math.log(i)/Math.log(2)) + 1;
+            newHeight = (int) (Math.log(i) / Math.log(2)) + 1;
         }
-        height = Math.max(tree.height, newHeight);
-        if (tree.branch == null){
+
+        // height = Math.max(tree.height, newHeight);
+
+        if (oldTree.branch == null) {
             branch = new Branch(height, i, value);
+        } else if (oldTree.height < newHeight) {
+            branch = oldTree.branch.expand(newHeight);
+            branch.right = new Branch(height - 1, i, value);
         } else {
-            branch = new Branch(tree.branch, height, i, value);
+            branch = new Branch(oldTree.branch, height, i, value);
         }
     }
 
-    
-    private interface Node{
+    private interface Node {
         public String toString();
+
         public int getValue(int i);
     }
 
-    private class Branch implements Node{
+    private class Branch implements Node {
         private int maxinsubtree;
         private int height;
         private Node left;
         private Node right;
 
-        public Branch(int height, int i, int value){
+        private Branch(int maxinsubtree, int height, Node left, Node right) {
+            this.maxinsubtree = maxinsubtree;
+            this.height = height;
+            this.left = left;
+            this.right = right;
+        }
+
+        public Branch(int height, int i, int value) {
             this.height = height;
             maxinsubtree = value;
-            int bit = (i >> (height-1)) & 1;
-            if (height <= 1){
-                if (bit == 0){
+            int bit = (i >> (height - 1)) & 1;
+            if (height <= 1) {
+                if (bit == 0) {
                     left = new Leaf(value);
                 } else {
                     right = new Leaf(value);
                 }
             } else {
-                Branch newBranch = new Branch(height-1, i, value);
-                if (bit == 0){
+                Branch newBranch = new Branch(height - 1, i, value);
+                if (bit == 0) {
                     left = newBranch;
                 } else {
                     right = newBranch;
                 }
-            }        
+            }
         }
 
-        public Branch(Branch oldBranch, int height, int i, int value){
+        public Branch(Branch oldBranch, int height, int i, int value) {
             this.height = height;
             maxinsubtree = value;
-            int bit = (i >> (height-1)) & 1;
-            if (height <= 1){
-                if (bit == 0){
+            int bit = (i >> (height - 1)) & 1;
+            if (height <= 1) {
+                if (bit == 0) {
                     left = new Leaf(value);
                     right = oldBranch.right;
                 } else {
@@ -69,106 +81,122 @@ public class Tree {
                     left = oldBranch.left;
                 }
             } else {
-                if (bit == 0){
-                    if (oldBranch.right != null) right = oldBranch.right;
-                    if (oldBranch.left == null){
-                        left = new Branch(height-1, i, value);
-                    } else{
-                        left = new Branch((Branch) oldBranch.left, height-1, i, value);
+                if (bit == 0) {
+                    if (oldBranch.right != null)
+                        right = oldBranch.right;
+                    if (oldBranch.left == null) {
+                        left = new Branch(height - 1, i, value);
+                    } else {
+                        left = new Branch((Branch) oldBranch.left, height - 1, i, value);
                     }
                 } else {
-                    if (oldBranch.left != null) left = oldBranch.left;
-                    if (oldBranch.right == null ){
-                        right = new Branch(height-1, i, value);
+                    if (oldBranch.left != null)
+                        left = oldBranch.left;
+                    if (oldBranch.right == null) {
+                        right = new Branch(height - 1, i, value);
                     } else {
-                        right = new Branch((Branch) oldBranch.right, height-1, i, value);
+                        right = new Branch((Branch) oldBranch.right, height - 1, i, value);
                     }
                 }
-            }        
+            }
         }
 
-        public int getHeight(){
+        // private Branch expand(Branch branch, int targetHeight) {
+        // if (targetHeight == branch.height) {
+        // return branch;
+        // } else {
+        // Branch newBranchNode = new Branch(branch.height);
+        // newBranchNode.left = branch;
+        // newBranchNode.maxinsubtree = branch.maxinsubtree;
+        // newBranchNode.height = branch.height + 1;
+        // return expand(newBranchNode, targetHeight);
+        // }
+        // }
+
+        private Branch expand(int targetHeight) {
+            if (targetHeight <= height) {
+                return this;
+            } else {
+                return (new Branch(maxinsubtree, height + 1, this, null)).expand(targetHeight);
+            }
+        }
+
+        public int getHeight() {
             return height;
         }
 
-        public int getValue(int i){
-            int bit = (i >> (height-1)) & 1;
-            if (height <= 1){
-                if (bit == 0){
+        public int getValue(int i) {
+            int bit = (i >> (height - 1)) & 1;
+            if (height <= 1) {
+                if (bit == 0) {
                     return left != null ? left.getValue(0) : 0;
                 } else {
                     return right != null ? right.getValue(0) : 0;
                 }
             } else {
-                if (bit == 0){
+                if (bit == 0) {
                     return left != null ? left.getValue(i) : 0;
                 } else {
                     return right != null ? right.getValue(i) : 0;
                 }
-            }  
+            }
         }
 
-        public String toString(){
+        public String toString() {
             String leftString = left != null ? left.toString() : "null";
             String rightString = right != null ? right.toString() : "null";
             return "(" + leftString + " " + rightString + ")";
         }
     }
 
-    private class Leaf implements Node{
+    private class Leaf implements Node {
         private final int value;
 
-        public Leaf(int value){
+        public Leaf(int value) {
             this.value = value;
         }
 
-        public int getHeight(){
+        public int getHeight() {
             return 0;
         }
 
-        public String toString(){
+        public String toString() {
             return Integer.toString(value);
         }
 
-        public int getValue(int i){
+        public int getValue(int i) {
             return value;
         }
     }
 
-    public String toString(){
+    public String toString() {
         return branch.toString();
     }
 
-    public static Tree newarray(){
+    public static Tree newarray() {
         return new Tree();
     }
 
-    public static Tree set(Tree a, int i, int value){
+    public static Tree set(Tree a, int i, int value) {
         return new Tree(a, i, value);
     }
 
-
-
-    private int getHeight(){
+    private int getHeight() {
         return height;
     }
 
-    public static int get(Tree a, int i){
+    public static int get(Tree a, int i) {
         return a.branch.getValue(i);
     }
 
-
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Tree tree = newarray();
         tree = set(tree, 5, 12);
         tree = set(tree, 10, 32);
         System.out.println(tree.toString());
 
         System.out.println(get(tree, 5));
-         System.out.println(get(tree, 10));
-          System.out.println(get(tree, 0));
+        System.out.println(get(tree, 10));
+        System.out.println(get(tree, 0));
     }
 }
-
-
-
