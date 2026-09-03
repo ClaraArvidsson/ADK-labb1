@@ -20,9 +20,8 @@ public class Tree {
 
     
     private interface Node{
-        public int getHeight();
-        public int getValue();
         public String toString();
+        public int getValue(int i);
     }
 
     private class Branch implements Node{
@@ -38,14 +37,14 @@ public class Tree {
             if (height <= 1){
                 if (bit == 0){
                     left = new Leaf(value);
-                } else if (bit == 1){
+                } else {
                     right = new Leaf(value);
                 }
             } else {
                 Branch newBranch = new Branch(height-1, i, value);
                 if (bit == 0){
                     left = newBranch;
-                } else if (bit == 1){
+                } else {
                     right = newBranch;
                 }
             }        
@@ -53,6 +52,23 @@ public class Tree {
 
         public int getHeight(){
             return height;
+        }
+
+        public int getValue(int i){
+            int bit = (i >> (height-1)) & 1;
+            if (height <= 1){
+                if (bit == 0){
+                    return left != null ? left.getValue(0) : 0;
+                } else {
+                    return right != null ? right.getValue(0) : 0;
+                }
+            } else {
+                if (bit == 0){
+                    return left != null ? left.getValue(i >> 1) : 0;
+                } else {
+                    return right != null ? right.getValue(i >> 1) : 0;
+                }
+            }  
         }
 
         public String toString(){
@@ -77,7 +93,7 @@ public class Tree {
             return Integer.toString(value);
         }
 
-        public int getValue(){
+        public int getValue(int i){
             return value;
         }
     }
@@ -98,28 +114,18 @@ public class Tree {
         return height;
     }
 
-    // public static int get(Tree a, int i){
-    //     int height = a.getHeight();
-
-    //     int bit = (i >> (height-1)) & 1;
-    //     if (height <= 1){
-    //         int value = bit == 0 ? right.getValue() : left.getValue();
-    //     }
-    // }
-
-    public static int getNodeValue(Node a, int i){
-        int height = a.getHeight();
-        
-        int bit = (i >> (height-1)) & 1;
-        if (height <= 0){
-            return a.getValue();
-        }
+    // get value av branchen ska returners
+    public static int get(Tree a, int i){
+        return a.branch.getValue(i);
     }
+
 
     public static void main(String[] args){
         Tree tree = newarray();
         tree = set(tree, 5, 12);
         System.out.println(tree.toString());
+
+        System.out.println(get(tree, 5));
     }
 }
 
