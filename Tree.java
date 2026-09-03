@@ -1,13 +1,15 @@
 public class Tree {
     private int size;
+    private int height;
     private Branch branch;
 
     public Tree(){
         size = 0;
+        height = 0;
     }
 
     public Tree(Tree tree, int i, int value){
-        int height;
+        // int height;
         if (i < 2){
            height = 1; 
         } else {
@@ -18,15 +20,19 @@ public class Tree {
 
     
     private interface Node{
+        public int getHeight();
+        public int getValue();
         public String toString();
     }
 
     private class Branch implements Node{
         private int maxinsubtree;
+        private int height;
         private Node left;
         private Node right;
 
         public Branch(int height, int i, int value){
+            this.height = height;
             maxinsubtree = value;
             int bit = (i >> (height-1)) & 1;
             if (height <= 1){
@@ -45,6 +51,10 @@ public class Tree {
             }        
         }
 
+        public int getHeight(){
+            return height;
+        }
+
         public String toString(){
             String leftString = left != null ? left.toString() : "null";
             String rightString = right != null ? right.toString() : "null";
@@ -59,8 +69,16 @@ public class Tree {
             this.value = value;
         }
 
+        public int getHeight(){
+            return 0;
+        }
+
         public String toString(){
             return Integer.toString(value);
+        }
+
+        public int getValue(){
+            return value;
         }
     }
 
@@ -74,6 +92,28 @@ public class Tree {
 
     public static Tree set(Tree a, int i, int value){
         return new Tree(a, i, value);
+    }
+
+    private int getHeight(){
+        return height;
+    }
+
+    // public static int get(Tree a, int i){
+    //     int height = a.getHeight();
+
+    //     int bit = (i >> (height-1)) & 1;
+    //     if (height <= 1){
+    //         int value = bit == 0 ? right.getValue() : left.getValue();
+    //     }
+    // }
+
+    public static int getNodeValue(Node a, int i){
+        int height = a.getHeight();
+        
+        int bit = (i >> (height-1)) & 1;
+        if (height <= 0){
+            return a.getValue();
+        }
     }
 
     public static void main(String[] args){
