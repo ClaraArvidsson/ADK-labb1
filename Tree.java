@@ -173,7 +173,13 @@ public class Tree {
         return new Tree();
     }
 
-    public static Tree set(Tree a, int i, int value) {
+    public static Tree set(Tree a, int i, int value) throws  IllegalArgumentException {
+        if (i < 0){
+            throw new IllegalArgumentException("Index out of bounds");
+        }
+        if (value < 0){
+            throw new IllegalArgumentException("Value must be positive integer");
+        }
         return new Tree(a, i, value);
     }
 
@@ -182,7 +188,8 @@ public class Tree {
     }
 
     public static int maxininterval(Tree a, int left, int right) {
-        return maxsegment(a.branch, left, right, a.height);
+        int max = maxsegment(a.branch, left, right, a.height);
+        return max != -1 ? max : 0;
     }
 
     private static int maxsegment(Node root, int left, int right, int height) {
@@ -227,13 +234,13 @@ public class Tree {
         if (height <= 0)
             return ((Leaf) root).value;
         Branch branch = (Branch) root;
-        if (bit == 0) {
-            int leftValue = branch.right != null ? branch.right.getMaxValue() : -1;
-            int rightValue = maxrightsegment(branch.left, i, height - 1);
+        if (bit == 0) 
+            return maxleftsegment(branch.left, i, height - 1);
+        if (bit == 1){
+            int leftValue = branch.left != null ? branch.left.getMaxValue() : -1;
+            int rightValue = maxleftsegment(branch.right, i, height - 1);
             return Math.max(leftValue, rightValue);
         }
-        if (bit == 1)
-            return maxrightsegment(branch.right, i, height - 1);
         return -1;
     }
 
