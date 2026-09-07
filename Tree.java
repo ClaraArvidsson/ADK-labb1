@@ -1,3 +1,5 @@
+import java.util.Stack;
+
 public class Tree {
     private int size;
     private int height;
@@ -76,7 +78,7 @@ public class Tree {
                 }
 
                 int leftMaxValue = left != null ? ((Leaf) left).value : 0;
-                int rightMaxValue = right != null ? ((Leaf) left).value : 0;
+                int rightMaxValue = right != null ? ((Leaf) right).value : 0;
 
                 maxinsubtree = Math.max(leftMaxValue, rightMaxValue);
             } else {
@@ -171,11 +173,32 @@ public class Tree {
 
     public static void main(String[] args) {
         Tree tree = newarray();
-        tree = set(tree, 0, 10);
-        tree = set(tree, 1, 20);
-        tree = set(tree, 0, 30);
-        tree = set(tree, 4, 40);
-        System.out.println(tree.toString());
+        Stack<Tree> trees = new Stack<Tree>();
+        trees.push(tree);
+
+        tree = set(trees.peek(), 3, 17);
+        trees.push(tree);
+
+        tree = set(trees.peek(), 3, 4711);
+        trees.push(tree);
+
+        System.out.println(get(trees.peek(), 3));
+
+        tree = set(trees.peek(), 2, 20);
+        trees.push(tree);
+
+        trees.pop();
+
+        tree = set(trees.peek(), 3, 1000);
+        trees.push(tree);
+
+        trees.pop();
+
+        System.out.println(get(trees.peek(), 3));
+
+        trees.pop();
+
+        System.out.println(get(trees.peek(), 3));
 
     }
 }
