@@ -30,6 +30,8 @@ public class Tree {
         public String toString();
 
         public int getValue(int i);
+
+        public int getMaxValue();
     }
 
     private class Branch implements Node {
@@ -132,6 +134,10 @@ public class Tree {
             }
         }
 
+        public int getMaxValue() {
+            return maxinsubtree;
+        }
+
         public String toString() {
             String leftString = left != null ? left.toString() : "null";
             String rightString = right != null ? right.toString() : "null";
@@ -153,6 +159,10 @@ public class Tree {
         public int getValue(int i) {
             return value;
         }
+
+        public int getMaxValue() {
+            return value;
+        }
     }
 
     public String toString() {
@@ -171,6 +181,62 @@ public class Tree {
         return a.branch.getValue(i);
     }
 
+    public static int maxininterval(Tree a, int left, int right) {
+        return maxsegment(a.branch, left, right, a.height);
+    }
+
+    private static int maxsegment(Node root, int left, int right, int height) {
+        int leftBit = (left >> (height - 1)) & 1;
+        int rightBit = (right >> (height - 1)) & 1;
+        if (root == null)
+            return -1;
+        if (height <= 0)
+            return ((Leaf) root).value;
+        Branch branch = (Branch) root;
+        if (leftBit == 0 && rightBit == 0)
+            return maxsegment(branch.left, left, right, height - 1);
+        else if (leftBit == 1 && rightBit == 1)
+            return maxsegment(branch.right, left, right, height - 1);
+        else if (leftBit == 0 && rightBit == 1)
+            return Math.max(maxrightsegment(branch.left, left, height - 1),
+                    maxleftsegment(branch.right, right, height - 1));
+        return -1;
+    }
+
+    private static int maxrightsegment(Node root, int i, int height) {
+        int bit = (i >> (height - 1)) & 1;
+        if (root == null)
+            return -1;
+        if (height <= 0)
+            return ((Leaf) root).value;
+        Branch branch = (Branch) root;
+        if (bit == 0) {
+            int leftValue = maxrightsegment(branch.left, i, height - 1);
+            int rightValue = branch.right != null ? branch.right.getMaxValue() : -1;
+            return Math.max(leftValue, rightValue);
+        }
+        if (bit == 1)
+            return maxrightsegment(branch.right, i, height - 1);
+        return -1;
+    }
+
+    private static int maxleftsegment(Node root, int i, int height) {
+        int bit = (i >> (height - 1)) & 1;
+        if (root == null)
+            return -1;
+        if (height <= 0)
+            return ((Leaf) root).value;
+        Branch branch = (Branch) root;
+        if (bit == 0) {
+            int leftValue = branch.right != null ? branch.right.getMaxValue() : -1;
+            int rightValue = maxrightsegment(branch.left, i, height - 1);
+            return Math.max(leftValue, rightValue);
+        }
+        if (bit == 1)
+            return maxrightsegment(branch.right, i, height - 1);
+        return -1;
+    }
+
     public static void main(String[] args) {
         Tree tree = newarray();
         Stack<Tree> trees = new Stack<Tree>();
@@ -186,6 +252,8 @@ public class Tree {
 
         tree = set(trees.peek(), 2, 20);
         trees.push(tree);
+
+        System.out.println(maxininterval(trees.peek(), 1, 3));
 
         trees.pop();
 
