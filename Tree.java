@@ -228,12 +228,12 @@ public class Tree {
             return ((Leaf) root).value;
         Branch branch = (Branch) root;
         if (bit == 0) {
-            int leftValue = branch.right != null ? branch.right.getMaxValue() : -1;
-            int rightValue = maxrightsegment(branch.left, i, height - 1);
+            int leftValue = branch.left != null ? branch.left.getMaxValue() : -1;
+            int rightValue = maxleftsegment(branch.right, i, height - 1);
             return Math.max(leftValue, rightValue);
         }
         if (bit == 1)
-            return maxrightsegment(branch.right, i, height - 1);
+            return maxleftsegment(branch.right, i, height - 1);
         return -1;
     }
 
