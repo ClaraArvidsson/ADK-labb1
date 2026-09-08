@@ -107,7 +107,7 @@ public class Main {
         //         "4. maxininterval <left> <right> - Get the maximum value in the specified interval.\n" +
         //         "5. exit - Exit the program.");
 
-        while (true) {
+        while (scanner.hasNext()) {
             if (treeStack.empty()){
                 Tree tree = new Tree();
                 treeStack.push(tree);
@@ -115,7 +115,7 @@ public class Main {
             String userInput = scanner.nextLine();
             String[] tokenSplit = userInput.split(" ");
 
-            System.out.print("\033[1A\033[2K");
+            // System.out.print("\033[1A\033[2K");
             
             interpretUserInput(tokenSplit, treeStack);
             if (exit == true)

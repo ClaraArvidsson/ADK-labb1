@@ -185,7 +185,7 @@ public class Tree {
     }
 
     public static int get(Tree a, int i) {
-        return a.branch.getValue(i);
+        return a.branch != null ? a.branch.getValue(i) : 0;
     }
 
     public static int maxininterval(Tree a, int left, int right) {
