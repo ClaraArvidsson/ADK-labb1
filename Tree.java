@@ -1,4 +1,5 @@
 import java.util.Stack;
+import java.util.Scanner;
 
 public class Tree {
     private int size;
@@ -243,37 +244,38 @@ public class Tree {
         }
         return -1;
     }
-
-    public static void main(String[] args) {
-        Tree tree = newarray();
-        Stack<Tree> trees = new Stack<Tree>();
-        trees.push(tree);
-
-        tree = set(trees.peek(), 3, 17);
-        trees.push(tree);
-
-        tree = set(trees.peek(), 3, 4711);
-        trees.push(tree);
-
-        System.out.println(get(trees.peek(), 3));
-
-        tree = set(trees.peek(), 2, 20);
-        trees.push(tree);
-
-        System.out.println(maxininterval(trees.peek(), 1, 3));
-
-        trees.pop();
-
-        tree = set(trees.peek(), 3, 1000);
-        trees.push(tree);
-
-        trees.pop();
-
-        System.out.println(get(trees.peek(), 3));
-
-        trees.pop();
-
-        System.out.println(get(trees.peek(), 3));
-
-    }
 }
+
+//     public static void main(String[] args) {
+//         Tree tree = newarray();
+//         Stack<Tree> trees = new Stack<Tree>();
+//         trees.push(tree);
+
+//         tree = set(trees.peek(), 3, 17);
+//         trees.push(tree);
+
+//         tree = set(trees.peek(), 3, 4711);
+//         trees.push(tree);
+
+//         System.out.println(get(trees.peek(), 3));
+
+//         tree = set(trees.peek(), 2, 20);
+//         trees.push(tree);
+
+//         System.out.println(maxininterval(trees.peek(), 1, 3));
+
+//         trees.pop();
+
+//         tree = set(trees.peek(), 3, 1000);
+//         trees.push(tree);
+
+//         trees.pop();
+
+//         System.out.println(get(trees.peek(), 3));
+
+//         trees.pop();
+
+//         System.out.println(get(trees.peek(), 3));
+
+//     }
+// }
