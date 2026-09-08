@@ -119,18 +119,22 @@ public class Tree {
         }
 
         public int getValue(int i) {
-            int bit = (i >> (height - 1)) & 1;
-            if (height <= 1) {
-                if (bit == 0) {
-                    return left != null ? left.getValue(0) : 0;
-                } else {
-                    return right != null ? right.getValue(0) : 0;
-                }
+            if (i > Math.pow(height, 2)){
+                return 0;
             } else {
-                if (bit == 0) {
-                    return left != null ? left.getValue(i) : 0;
+                int bit = (i >> (height - 1)) & 1;
+                if (height <= 1) {
+                    if (bit == 0) {
+                        return left != null ? left.getValue(0) : 0;
+                    } else {
+                        return right != null ? right.getValue(0) : 0;
+                    }
                 } else {
-                    return right != null ? right.getValue(i) : 0;
+                    if (bit == 0) {
+                        return left != null ? left.getValue(i) : 0;
+                    } else {
+                        return right != null ? right.getValue(i) : 0;
+                    }
                 }
             }
         }
@@ -184,8 +188,11 @@ public class Tree {
         return new Tree(a, i, value);
     }
 
+    // public static int get(Tree a, int i) {
+    //     return a.branch != null ? a.branch.getValue(i) : 0;
+    // }
     public static int get(Tree a, int i) {
-        return a.branch != null ? a.branch.getValue(i) : 0;
+        return a.branch.getValue(i);
     }
 
     public static int maxininterval(Tree a, int left, int right) {
