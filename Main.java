@@ -98,18 +98,20 @@ public class Main {
 
     public static void main(String[] args) {
         Stack<Tree> treeStack = new Stack<>();
-        Tree tree = new Tree();
-        treeStack.push(tree);
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Commands:\n" +
-                "1. set <index> <value> - Set the value at the specified index.\n" +
-                "2. unset - Undo the last set operation.\n" +
-                "3. get <index> - Get the value at the specified index.\n" +
-                "4. maxininterval <left> <right> - Get the maximum value in the specified interval.\n" +
-                "5. exit - Exit the program.");
+        // System.out.println("Commands:\n" +
+        //         "1. set <index> <value> - Set the value at the specified index.\n" +
+        //         "2. unset - Undo the last set operation.\n" +
+        //         "3. get <index> - Get the value at the specified index.\n" +
+        //         "4. maxininterval <left> <right> - Get the maximum value in the specified interval.\n" +
+        //         "5. exit - Exit the program.");
 
         while (true) {
+            if (treeStack.empty()){
+                Tree tree = new Tree();
+                treeStack.push(tree);
+            }
             String userInput = scanner.nextLine();
             String[] tokenSplit = userInput.split(" ");
 
