@@ -1,3 +1,4 @@
+package src;
 import java.util.Stack;
 import java.util.Scanner;
 
@@ -258,6 +259,10 @@ public class Tree {
             return Math.max(leftValue, rightValue);
         }
         return -1;
+    }
+
+    public int getHeight(){
+        return this.height;
     }
 
     public static void main(String[] args) {
