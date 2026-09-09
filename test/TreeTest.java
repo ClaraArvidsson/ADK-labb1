@@ -1,4 +1,5 @@
 package test;
+
 import src.Tree;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Assertions;
@@ -14,13 +15,13 @@ public class TreeTest {
         /**
          * Tree structure:
          *
-         *               •
-         *             /   \
-         *            •     •
-         *           /  \     \
-         *          •    •     •
-         *         / \  / \   /
-         *        8  5 777 3  21  
+         * •
+         * / \
+         * • •
+         * / \ \
+         * • • •
+         * / \ / \ /
+         * 8 5 777 3 21
          */
         tree = new Tree();
         tree = Tree.set(tree, 0, 8);
@@ -28,7 +29,7 @@ public class TreeTest {
         tree = Tree.set(tree, 2, 777);
         tree = Tree.set(tree, 3, 3);
         tree = Tree.set(tree, 6, 21);
-        
+
     }
 
     @Test
@@ -36,5 +37,43 @@ public class TreeTest {
         int result = tree.getHeight();
         Assertions.assertEquals(3, result, "The result should be 3");
     }
-}
 
+    @Test
+    void getReturnsCorrectValueForIndexWithMaxInt() {
+    }
+
+    @Test
+    void getThrowsIllegalArgumentExceptionForNegativeIndex() {
+
+    }
+
+    @Test
+    void setThrowsIllegalArgumentExceptionForNegativeIndex() {
+
+    }
+
+    @Test
+    void setThrowsIllegalArgumentExceptionForNonPositiveValue() {
+
+    }
+
+    @Test
+    void maxinintervalReturnsCorrectValueForSameLeftAndRightIndex() {
+
+    }
+
+    @Test
+    void maxinintervalReturnsCorrectValueForLeftIndexOutOfBounds() {
+
+    }
+
+    @Test
+    void maxinintervalReturnsCorrectValueForRightIndexOutOfBOunds() {
+
+    }
+
+    @Test
+    void maxinintervalReturnsZeroForBothIndexOutOfBounds() {
+
+    }
+}
