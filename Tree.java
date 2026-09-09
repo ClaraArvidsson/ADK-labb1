@@ -1,4 +1,5 @@
 import java.util.Stack;
+import java.util.Scanner;
 
 public class Tree {
     private int size;
@@ -118,21 +119,26 @@ public class Tree {
         }
 
         public int getValue(int i) {
-            int bit = (i >> (height - 1)) & 1;
-            if (height <= 1) {
-                if (bit == 0) {
-                    return left != null ? left.getValue(0) : 0;
-                } else {
-                    return right != null ? right.getValue(0) : 0;
-                }
+            if (i >= Math.pow(2, height)){
+                return 0;
             } else {
-                if (bit == 0) {
-                    return left != null ? left.getValue(i) : 0;
-                } else {
-                    return right != null ? right.getValue(i) : 0;
-                }
+            return getValue(this, i, height);
             }
         }
+
+        private static int getValue(Node root, int i, int height){
+            if (height <= 0){
+                return ((Leaf) root).value;
+            } else {
+                Branch branch = (Branch) root;
+                int bit = (i >> (height - 1)) & 1;
+                if (bit == 0){
+                    return branch.left != null ? getValue(branch.left, i, height - 1) : 0;
+                } else {
+                    return branch.right != null ? getValue(branch.right, i, height - 1) : 0;
+                }
+            }
+        }  
 
         public int getMaxValue() {
             return maxinsubtree;
@@ -173,19 +179,31 @@ public class Tree {
         return new Tree();
     }
 
-    public static Tree set(Tree a, int i, int value) {
+    public static Tree set(Tree a, int i, int value) throws  IllegalArgumentException {
+        if (i < 0){
+            throw new IllegalArgumentException("Index out of bounds");
+        }
+        if (value < 0){
+            throw new IllegalArgumentException("Value must be positive integer");
+        }
         return new Tree(a, i, value);
     }
 
     public static int get(Tree a, int i) {
-        return a.branch.getValue(i);
+        return a.branch != null ? a.branch.getValue(i) : 0;
     }
 
+
     public static int maxininterval(Tree a, int left, int right) {
-        return maxsegment(a.branch, left, right, a.height);
+        int max = maxsegment(a.branch, left, right, a.height);
+        return max != -1 ? max : 0;
     }
 
     private static int maxsegment(Node root, int left, int right, int height) {
+        int maxIndexInTree = (int) Math.pow(2, height) - 1;
+        if (right > maxIndexInTree){
+            return maxsegment(root, left, maxIndexInTree, height);
+        }
         int leftBit = (left >> (height - 1)) & 1;
         int rightBit = (right >> (height - 1)) & 1;
         if (root == null)
@@ -227,46 +245,47 @@ public class Tree {
         if (height <= 0)
             return ((Leaf) root).value;
         Branch branch = (Branch) root;
-        if (bit == 0) {
+        if (bit == 0) 
+            return maxleftsegment(branch.left, i, height - 1);
+        if (bit == 1){
             int leftValue = branch.left != null ? branch.left.getMaxValue() : -1;
             int rightValue = maxleftsegment(branch.right, i, height - 1);
             return Math.max(leftValue, rightValue);
         }
-        if (bit == 1)
-            return maxleftsegment(branch.right, i, height - 1);
         return -1;
     }
-
-    public static void main(String[] args) {
-        Tree tree = newarray();
-        Stack<Tree> trees = new Stack<Tree>();
-        trees.push(tree);
-
-        tree = set(trees.peek(), 3, 17);
-        trees.push(tree);
-
-        tree = set(trees.peek(), 3, 4711);
-        trees.push(tree);
-
-        System.out.println(get(trees.peek(), 3));
-
-        tree = set(trees.peek(), 2, 20);
-        trees.push(tree);
-
-        System.out.println(maxininterval(trees.peek(), 1, 3));
-
-        trees.pop();
-
-        tree = set(trees.peek(), 3, 1000);
-        trees.push(tree);
-
-        trees.pop();
-
-        System.out.println(get(trees.peek(), 3));
-
-        trees.pop();
-
-        System.out.println(get(trees.peek(), 3));
-
-    }
 }
+
+//     public static void main(String[] args) {
+//         Tree tree = newarray();
+//         Stack<Tree> trees = new Stack<Tree>();
+//         trees.push(tree);
+
+//         tree = set(trees.peek(), 3, 17);
+//         trees.push(tree);
+
+//         tree = set(trees.peek(), 3, 4711);
+//         trees.push(tree);
+
+//         System.out.println(get(trees.peek(), 3));
+
+//         tree = set(trees.peek(), 2, 20);
+//         trees.push(tree);
+
+//         System.out.println(maxininterval(trees.peek(), 1, 3));
+
+//         trees.pop();
+
+//         tree = set(trees.peek(), 3, 1000);
+//         trees.push(tree);
+
+//         trees.pop();
+
+//         System.out.println(get(trees.peek(), 3));
+
+//         trees.pop();
+
+//         System.out.println(get(trees.peek(), 3));
+
+//     }
+// }
