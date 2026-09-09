@@ -13,7 +13,8 @@ public class Tree {
 
     public Tree(Tree oldTree, int i, int value) {
         size = oldTree.size + 1;
-        int newHeight = i < 2 ? 1 : (int) (Math.log(i) / Math.log(2)) + 1;
+        // int newHeight = i < 2 ? 1 : (int) (Math.log(i) / Math.log(2)) + 1;
+        int newHeight = i == 0 ? 1 : 32 - Integer.numberOfLeadingZeros(i);
         height = Math.max(oldTree.height, newHeight);
         if (oldTree.branch == null) {
             branch = new Branch(height, i, value);
@@ -119,7 +120,7 @@ public class Tree {
         }
 
         public int getValue(int i) {
-            if (i >= ((int) Math.pow(2, height))) {
+            if (i < 0 || (long) i >= (1L << height)) {
                 return 0;
             } else {
                 return getValue(this, i, height);
@@ -183,7 +184,7 @@ public class Tree {
         if (i < 0) {
             throw new IllegalArgumentException("Index out of bounds");
         }
-        if (value < 0) {
+        if (value < 1) {
             throw new IllegalArgumentException("Value must be positive integer");
         }
         return new Tree(a, i, value);
@@ -196,7 +197,7 @@ public class Tree {
     }
 
     public static int maxininterval(Tree a, int left, int right) {
-        int maxIndexInTree = (int) Math.pow(2, a.height) - 1;
+        int maxIndexInTree = (1 << a.height) - 1;
         left = Math.max(0, left);
         right = Math.min(right, maxIndexInTree);
         if (left > right)
