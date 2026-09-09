@@ -97,7 +97,7 @@ public class TreeTest {
     }
 
         @Test
-    void maxinintervalReturnsMaxOfTreeIfBothLeftAndRightIndexOutOfBounds() {
+    void maxinintervalReturnsMaxOfTreeIfLeftOutOfNegativeAndRightOutOfPositiveIndexBounds() {
         int result = Tree.maxininterval(tree, -100, 100);
         Assertions.assertEquals(777, result);
 
