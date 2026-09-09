@@ -1,0 +1,291 @@
+import java.util.Stack;
+import java.util.Scanner;
+
+public class Tree {
+    private int size;
+    private int height;
+    private Branch branch;
+
+    public Tree() {
+        size = 0;
+        height = 0;
+    }
+
+    public Tree(Tree oldTree, int i, int value) {
+        size = oldTree.size + 1;
+        int newHeight = i < 2 ? 1 : (int) (Math.log(i) / Math.log(2)) + 1;
+        height = Math.max(oldTree.height, newHeight);
+        if (oldTree.branch == null) {
+            branch = new Branch(height, i, value);
+        } else if (oldTree.height < height) {
+            Branch leftBranch = oldTree.branch.expand(height - 1);
+            Branch rightBranch = new Branch(height - 1, i, value);
+            branch = new Branch(Math.max(leftBranch.maxinsubtree, rightBranch.maxinsubtree), height, leftBranch,
+                    rightBranch);
+        } else {
+            branch = new Branch(oldTree.branch, height, i, value);
+        }
+    }
+
+    private interface Node {
+        public String toString();
+
+        public int getValue(int i);
+
+        public int getMaxValue();
+    }
+
+    private class Branch implements Node {
+        private int maxinsubtree;
+        private int height;
+        private Node left;
+        private Node right;
+
+        public Branch(int maxinsubtree, int height, Node left, Node right) {
+            this.maxinsubtree = maxinsubtree;
+            this.height = height;
+            this.left = left;
+            this.right = right;
+        }
+
+        public Branch(int height, int i, int value) {
+            this.height = height;
+            maxinsubtree = value;
+            int bit = (i >> (height - 1)) & 1;
+            if (height <= 1) {
+                if (bit == 0) {
+                    left = new Leaf(value);
+                } else {
+                    right = new Leaf(value);
+                }
+            } else {
+                Branch newBranch = new Branch(height - 1, i, value);
+                if (bit == 0) {
+                    left = newBranch;
+                } else {
+                    right = newBranch;
+                }
+            }
+        }
+
+        public Branch(Branch oldBranch, int height, int i, int value) {
+            this.height = height;
+            int bit = (i >> (height - 1)) & 1;
+            if (height <= 1) {
+                if (bit == 0) {
+                    left = new Leaf(value);
+                    right = (Leaf) oldBranch.right;
+                } else {
+                    right = new Leaf(value);
+                    left = (Leaf) oldBranch.left;
+                }
+
+                int leftMaxValue = left != null ? ((Leaf) left).value : 0;
+                int rightMaxValue = right != null ? ((Leaf) right).value : 0;
+
+                maxinsubtree = Math.max(leftMaxValue, rightMaxValue);
+            } else {
+                if (bit == 0) {
+                    if (oldBranch.right != null)
+                        right = oldBranch.right;
+                    if (oldBranch.left == null) {
+                        left = new Branch(height - 1, i, value);
+                    } else {
+                        left = new Branch((Branch) oldBranch.left, height - 1, i, value);
+                    }
+                } else {
+                    if (oldBranch.left != null)
+                        left = oldBranch.left;
+                    if (oldBranch.right == null) {
+                        right = new Branch(height - 1, i, value);
+                    } else {
+                        right = new Branch((Branch) oldBranch.right, height - 1, i, value);
+                    }
+                }
+
+                int leftMaxValue = left != null ? ((Branch) left).maxinsubtree : 0;
+                int rightMaxValue = right != null ? ((Branch) right).maxinsubtree : 0;
+
+                maxinsubtree = Math.max(leftMaxValue, rightMaxValue);
+            }
+        }
+
+        private Branch expand(int targetHeight) {
+            if (targetHeight <= height) {
+                return this;
+            } else {
+                return (new Branch(maxinsubtree, height + 1, this, null)).expand(targetHeight);
+            }
+        }
+
+        public int getValue(int i) {
+            if (i >= Math.pow(2, height)){
+                return 0;
+            } else {
+            return getValue(this, i, height);
+            }
+        }
+
+        private static int getValue(Node root, int i, int height){
+            if (height <= 0){
+                return ((Leaf) root).value;
+            } else {
+                Branch branch = (Branch) root;
+                int bit = (i >> (height - 1)) & 1;
+                if (bit == 0){
+                    return branch.left != null ? getValue(branch.left, i, height - 1) : 0;
+                } else {
+                    return branch.right != null ? getValue(branch.right, i, height - 1) : 0;
+                }
+            }
+        }  
+
+        public int getMaxValue() {
+            return maxinsubtree;
+        }
+
+        public String toString() {
+            String leftString = left != null ? left.toString() : "null";
+            String rightString = right != null ? right.toString() : "null";
+            return "(" + leftString + " " + rightString + ")";
+        }
+    }
+
+    private class Leaf implements Node {
+        private final int value;
+
+        public Leaf(int value) {
+            this.value = value;
+        }
+
+        public String toString() {
+            return Integer.toString(value);
+        }
+
+        public int getValue(int i) {
+            return value;
+        }
+
+        public int getMaxValue() {
+            return value;
+        }
+    }
+
+    public String toString() {
+        return branch.toString();
+    }
+
+    public static Tree newarray() {
+        return new Tree();
+    }
+
+    public static Tree set(Tree a, int i, int value) throws  IllegalArgumentException {
+        if (i < 0){
+            throw new IllegalArgumentException("Index out of bounds");
+        }
+        if (value < 0){
+            throw new IllegalArgumentException("Value must be positive integer");
+        }
+        return new Tree(a, i, value);
+    }
+
+    public static int get(Tree a, int i) {
+        return a.branch != null ? a.branch.getValue(i) : 0;
+    }
+
+
+    public static int maxininterval(Tree a, int left, int right) {
+        int max = maxsegment(a.branch, left, right, a.height);
+        return max != -1 ? max : 0;
+    }
+
+    private static int maxsegment(Node root, int left, int right, int height) {
+        int maxIndexInTree = (int) Math.pow(2, height) - 1;
+        if (right > maxIndexInTree){
+            return maxsegment(root, left, maxIndexInTree, height);
+        }
+        int leftBit = (left >> (height - 1)) & 1;
+        int rightBit = (right >> (height - 1)) & 1;
+        if (root == null)
+            return -1;
+        if (height <= 0)
+            return ((Leaf) root).value;
+        Branch branch = (Branch) root;
+        if (leftBit == 0 && rightBit == 0)
+            return maxsegment(branch.left, left, right, height - 1);
+        else if (leftBit == 1 && rightBit == 1)
+            return maxsegment(branch.right, left, right, height - 1);
+        else if (leftBit == 0 && rightBit == 1)
+            return Math.max(maxrightsegment(branch.left, left, height - 1),
+                    maxleftsegment(branch.right, right, height - 1));
+        return -1;
+    }
+
+    private static int maxrightsegment(Node root, int i, int height) {
+        int bit = (i >> (height - 1)) & 1;
+        if (root == null)
+            return -1;
+        if (height <= 0)
+            return ((Leaf) root).value;
+        Branch branch = (Branch) root;
+        if (bit == 0) {
+            int leftValue = maxrightsegment(branch.left, i, height - 1);
+            int rightValue = branch.right != null ? branch.right.getMaxValue() : -1;
+            return Math.max(leftValue, rightValue);
+        }
+        if (bit == 1)
+            return maxrightsegment(branch.right, i, height - 1);
+        return -1;
+    }
+
+    private static int maxleftsegment(Node root, int i, int height) {
+        int bit = (i >> (height - 1)) & 1;
+        if (root == null)
+            return -1;
+        if (height <= 0)
+            return ((Leaf) root).value;
+        Branch branch = (Branch) root;
+        if (bit == 0) 
+            return maxleftsegment(branch.left, i, height - 1);
+        if (bit == 1){
+            int leftValue = branch.left != null ? branch.left.getMaxValue() : -1;
+            int rightValue = maxleftsegment(branch.right, i, height - 1);
+            return Math.max(leftValue, rightValue);
+        }
+        return -1;
+    }
+}
+
+//     public static void main(String[] args) {
+//         Tree tree = newarray();
+//         Stack<Tree> trees = new Stack<Tree>();
+//         trees.push(tree);
+
+//         tree = set(trees.peek(), 3, 17);
+//         trees.push(tree);
+
+//         tree = set(trees.peek(), 3, 4711);
+//         trees.push(tree);
+
+//         System.out.println(get(trees.peek(), 3));
+
+//         tree = set(trees.peek(), 2, 20);
+//         trees.push(tree);
+
+//         System.out.println(maxininterval(trees.peek(), 1, 3));
+
+//         trees.pop();
+
+//         tree = set(trees.peek(), 3, 1000);
+//         trees.push(tree);
+
+//         trees.pop();
+
+//         System.out.println(get(trees.peek(), 3));
+
+//         trees.pop();
+
+//         System.out.println(get(trees.peek(), 3));
+
+//     }
+// }
