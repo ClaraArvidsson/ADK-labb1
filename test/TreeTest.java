@@ -1,6 +1,6 @@
 package test;
 import src.Tree;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +9,7 @@ public class TreeTest {
     int height;
     int size;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         /**
          * Tree structure:
